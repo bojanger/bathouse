@@ -81,11 +81,11 @@ def main():
 			while not resultQ.empty():
 				temp = resultQ.get()
 				self.batQ.put("{\"method\": \"put\",\"resource\": \"/feeds/100441/\",\"params\"" +
-					": {},\"headers\": {\"" + APIKEY + "\"},\"body\": {\"version\": \"1.0.0\",\"datastreams\":")
+					": {},\"headers\": {\"X-ApiKey\":\"" + APIKEY + "\"},\"body\": {\"version\": \"1.0.0\",\"datastreams\":")
 				self.batQ.put("[{\"id\": \"01\",\"current_value\": \"" + batInCount + "\"},")
 				self.batQ.put("[{\"id\": \"02\",\"current_value\": \"" + batOutCount + "\"},")
 				self.batQ.put("[{\"id\": \"03\",\"current_value\": \"" + temp + "\"},")
-				self.batQ.put("[{\"id\": \"04\",\"current_value\": \"" + "Ding!" + "\"}]},\"token\": \"lee\"}")
+				self.batQ.put("[{\"id\": \"04\",\"current_value\": \"" + "Ding!" + "\"}]},\"token\": \"token\"}")
 				
 
 
