@@ -14,12 +14,15 @@ import batSend
 
 def main():
 
+	# sp object communicates data from the bathouse to the Pi
+	# 
 	taskQ = multiprocessing.Queue()
 	resultQ = multiprocessing.Queue()
 	sp = serialServer.SerialProcess(taskQ, resultQ)
 	sp.daemon = True
 	sp.start()
 
+	# bs object communicates data from pi to GPRS
 	batQ = multiprocessing.Queue()
 	finishQ = multiprocessing.Queue()
 	bs = batSend.SerialProcess(batQ, finishQ)
@@ -37,7 +40,7 @@ def main():
 	incomingBat = 0
 	outgoingBat = 0
 	APIKEY = "zQriLyz5VL15aXMJOGg3nYjoLt5nyDzqvYj4r6nbnYLyCJQG"
-	
+
 
 	while True:
 
@@ -47,6 +50,7 @@ def main():
 
 
 		##### Bat Counting System Logic #####
+		# batInTime and batOutTime currently unused
 		if result is "11" and incomingBat is 0 and outgoingBat is 0:
 			incomingBat = 1
 			batInTime = time.clock()
@@ -70,6 +74,8 @@ def main():
 			batInCount++
 			batInTime2 = time.clock()
 
+		# Every 30 minutes transmit data to Xively
+		# data is wrapped in JSON
 		if (int(time.strftime('%M', time.localtime()))%30) is 0:
 			self.taskQ.put("temp")
 			while not resultQ.empty():

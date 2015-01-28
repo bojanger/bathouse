@@ -16,7 +16,7 @@ def main():
 if __name__ == "__main__":
 	main()
 '''
-#Set APN
+#Set constants
 
 APN = "epc.tmobile.com"
 HOSTSERVER = "api.xively.com"
@@ -46,6 +46,7 @@ class BatSend(multiprocessing.Process):
 				return 0
 		return 1
 
+	# Method for getting an IP address and to initiate TCP communication
 	def tcpGSM(self):
 		self.sp.write("AT+CGATT?")
 		if self.timedOut() is 0:
