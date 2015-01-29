@@ -39,7 +39,7 @@ def main():
 	batOutTime2 = 0
 	incomingBat = 0
 	outgoingBat = 0
-	APIKEY = "zQriLyz5VL15aXMJOGg3nYjoLt5nyDzqvYj4r6nbnYLyCJQG"
+	APIKEY = NULL
 
 
 	while True:
