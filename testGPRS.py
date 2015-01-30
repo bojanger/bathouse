@@ -1,3 +1,5 @@
+#!/usr/bin/python27
+
 '''
 Testing Python Script
 to communicate with the GPRS shield through
@@ -7,6 +9,31 @@ command line
 import time
 import multiprocessing
 import serial
+
+def main():
+	taskQ = multiprocessing.Queue()
+	resultQ = multiprocessing.Queue()
+	sp = SerialProcess(taskQ, resultQ)
+	sp.daemon = True
+	sp.start()
+
+	time.sleep(1)
+
+	while True:
+
+		if not resultQ.empty():
+			while not resultQ.empty():
+				result = resultQ.get()
+				print "Received data from GPRS: " + result
+
+		if taskQ.empty():
+			task = input("Enter command: ")
+			if task is 'null':
+				time.sleep(1)
+			else:
+				taskQ.put(task)
+
+
 
 
 class SerialProcess(multiprocessing.Process):
@@ -34,6 +61,7 @@ class SerialProcess(multiprocessing.Process):
  			if self.sp.inWaiting() != 0:
  				result = self.sp.readline().replace("\r\n", "")
  				print(result)
+ 				self.resultQ.put(result)
 
 
 
