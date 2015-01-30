@@ -29,15 +29,15 @@ class BatSend(multiprocessing.Process):
 		self.batQ = batQ
 		self.finishQ = finishQ
 		self.usbPort = '/dev/ttyACM0'
-		self.sp = serial.Serial(self.usbPort, 9600, timeout=1)
+		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
 	def close(self):
 		self.sp.close()
 
 	def timedOut(self):
-		timeOut = float(time.strftime("%s", time.localtime()))
+		timeOut = float(self.time.strftime("%s", self.time.localtime()))
 		while self.sp.inWaiting() is not 1:
-			if float(time.strftime("%s", time.localtime())) >= (timeOut + 30):
+			if float(self.time.strftime("%s", self.time.localtime())) >= (self.timeOut + 30):
 				print "tcpGSM timed out"
 				return 0
 		return 1
@@ -87,7 +87,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIPSEND\r\n')
-		if self.timedOut is 0:
+		if self.timedOut is not 1:
 			return 0
 		response = self.sp.readline()
 		if response is "ERROR":
@@ -107,16 +107,21 @@ class BatSend(multiprocessing.Process):
 			if not self.batQ.empty():
 				message = self.batQ.get()
 				if self.tcpGSM() is 1:
+
 					self.sp.write(message)
 					while not self.batQ.empty():
 						message = self.batQ.get()
 						self.sp.write(message)
-					self.sp.write((chr)26)
-					if self.timedOut is 0:
-						return
-					response = self.sp.readline()
+					self.sp.write(chr(26))
+
+					if self.timedOut() is 1:
+						return 1
+
+					resp2 = self.sp.readline()
+
 					if response is "ERROR":
-						return
+						return 0
+
 					self.sp.write(b'AT+CIPCLOSE\r\n')
 					self.finishQ.put("Finished")
 

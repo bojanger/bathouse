@@ -12,7 +12,7 @@ class SerialProcess(multiprocessing.Process):
 		self.taskQ = taskQ
 		self.resultQ = resultQ
 		self.usbPort = '/dev/ttyACM0' #Set usb port to bathouse
-		self.sp = serial.Serial(self.usbPort, 9600, timeout=1)
+		self.sp = serial.Serial(self.usbPort, 9600, timeout=0)
 
 	def close(self):
 		self.sp.close()
