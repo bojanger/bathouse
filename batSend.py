@@ -1,21 +1,15 @@
 #!/usr/bin/python27
 
+'''
+Class containing methods for communicating with GPRS
+Since timing with GPRS shield is very dependent on the response time of AT commands,
+This class will parse responses and ensure robustness
+'''
+
 import time
 import multiprocessing
 import serial
 
-'''
-
-def main():
-
-
-
-
-
-
-if __name__ == "__main__":
-	main()
-'''
 #Set constants
 
 APN = "epc.tmobile.com"
@@ -31,6 +25,9 @@ class BatSend(multiprocessing.Process):
 		self.usbPort = '/dev/ttyACM0'
 		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
+	def powerOn(self):
+		
+
 	def close(self):
 		self.sp.close()
 
@@ -45,6 +42,7 @@ class BatSend(multiprocessing.Process):
 	# Method for getting an IP address and to initiate TCP communication
 	def tcpGSM(self):
 		self.sp.write(b'AT+CGATT?\r\n')
+		time.sleep(1)
 		if self.timedOut() is 0:
 			return 0
 		response = self.sp.readline()
@@ -52,6 +50,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CSTT=\"" + APN + "\"\r\n')
+		time.sleep(1)
 		if self.timedOut() is 0:
 			return 0
 		response = self.sp.readline()
@@ -59,6 +58,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIICR\r\n')
+		time.sleep(1)
 		if self.timedOut is 0:
 			return 0
 		response = self.sp.readline()
@@ -66,6 +66,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIFSR\r\n')
+		time.sleep(1)
 		if self.timedOut is 0:
 			return 0
 		response = self.sp.readline()
@@ -73,6 +74,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIPSPRT=0\r\n')
+		time.sleep(1)
 		if self.timedOut is 0:
 			return 0
 		response = self.sp.readline()
@@ -80,6 +82,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIPSTART=\"tcp\",\"" + HOSTSERVER + "\",\"" + HOSTPORT + "\"\r\n')
+		time.sleep(1)
 		if self.timedOut is 0:
 			return 0
 		response = self.sp.readline()
@@ -87,6 +90,7 @@ class BatSend(multiprocessing.Process):
 			return 0
 
 		self.sp.write(b'AT+CIPSEND\r\n')
+		time.sleep(1)
 		if self.timedOut is not 1:
 			return 0
 		response = self.sp.readline()
@@ -96,8 +100,6 @@ class BatSend(multiprocessing.Process):
 		print "Ready to send!"
 
 		return 1
-
-
 
 	def run(self):
 		self.sp.flushInput()
@@ -112,6 +114,7 @@ class BatSend(multiprocessing.Process):
 					while not self.batQ.empty():
 						message = self.batQ.get()
 						self.sp.write(message)
+						time.sleep(1)
 					self.sp.write(chr(26))
 
 					if self.timedOut() is 1:
@@ -123,6 +126,7 @@ class BatSend(multiprocessing.Process):
 						return 0
 
 					self.sp.write(b'AT+CIPCLOSE\r\n')
+					time.sleep(1)
 					self.finishQ.put("Finished")
 
 

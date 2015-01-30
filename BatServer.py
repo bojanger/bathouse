@@ -48,7 +48,11 @@ def main():
 
 		if not resultQ.empty():
 			result = resultQ.get()
-			print "Received data from bathouse: " + result
+			print('Received data from bathouse: ' + result)
+
+		if not finishQ.empty():
+			finish = finishQ.get()
+			print('Received data from GPRS: ' + finish)
 
 
 		##### Bat Counting System Logic #####
@@ -80,6 +84,8 @@ def main():
 		# data is wrapped in JSON
 		if (int(time.strftime('%M', time.localtime()))%30) is 0:
 			self.taskQ.put("temp")
+			time.sleep(2)
+			2
 			while not resultQ.empty():
 				temp = resultQ.get()
 				self.batQ.put("{\"method\": \"put\",\"resource\": \"/feeds/100441/\",\"params\"" +
