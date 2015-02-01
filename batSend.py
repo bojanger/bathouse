@@ -22,32 +22,30 @@ class BatSend(multiprocessing.Process):
 		multiprocessing.Process.__init__(self)
 		self.batQ = batQ
 		self.finishQ = finishQ
-		self.usbPort = '/dev/ttyACM0'
+		self.usbPort = '/dev/tty.usbserial-A603QHNB'
 		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
 	def powerOn(self):
-		
+		self.sp.write(b'power')
 
 	def close(self):
 		self.sp.close()
 
-	def timedOut(self):
-		timeOut = float(self.time.strftime("%s", self.time.localtime()))
-		while self.sp.inWaiting() is not 1:
-			if float(self.time.strftime("%s", self.time.localtime())) >= (self.timeOut + 30):
-				print "tcpGSM timed out"
-				return 0
-		return 1
+	def timedOut(self, timeOut):
+		if float(time.strftime("%s", time.localtime())) >= (timeOut + 30):
+			print('tcpGSM timed out')
+			return 1
 
 	# Method for getting an IP address and to initiate TCP communication
 	def tcpGSM(self):
 		self.sp.write(b'AT+CGATT?\r\n')
-		time.sleep(1)
-		if self.timedOut() is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
-			return 0
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if response is 'OK':
+					break
 
 		self.sp.write(b'AT+CSTT=\"" + APN + "\"\r\n')
 		time.sleep(1)

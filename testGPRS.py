@@ -25,13 +25,15 @@ def main():
 			while not resultQ.empty():
 				result = resultQ.get()
 				print "Received data from GPRS: " + result
+				time.sleep(0.5)
 
-		if taskQ.empty():
-			task = input("Enter command: ")
-			if task is 'null':
-				time.sleep(1)
-			else:
-				taskQ.put(task)
+		task = input("Enter command: ")
+		if task is not '0':
+			time.sleep(1)
+		else:
+			taskQ.put(task)
+
+		time.sleep(1)
 
 
 
@@ -59,15 +61,8 @@ class SerialProcess(multiprocessing.Process):
  				self.sp.write(task + b'\r\n')
 
  			if self.sp.inWaiting() != 0:
- 				result = self.sp.readline().replace("\r\n", "")
+ 				result = self.sp.readline()
  				print(result)
  				self.resultQ.put(result)
 
-
-
- 		
-
-
-
-if __name__ == '__main__':
-	main()
+main()

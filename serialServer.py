@@ -11,8 +11,8 @@ class SerialProcess(multiprocessing.Process):
 		multiprocessing.Process.__init__(self)
 		self.taskQ = taskQ
 		self.resultQ = resultQ
-		self.usbPort = '/dev/ttyACM0' #Set usb port to bathouse
-		self.sp = serial.Serial(self.usbPort, 9600, timeout=0)
+		self.usbPort = '/dev/tty.usbserial-A603QHNB' #Set usb port to bathouse
+		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
 	def close(self):
 		self.sp.close()
@@ -26,11 +26,13 @@ class SerialProcess(multiprocessing.Process):
 			# Look for incoming requests from server thread using taskQ
 			if not self.taskQ.empty():
 				task = self.taskQ.get()
-				self.sp.write(task + "\n")
+				self.sp.write(task)
+				time.sleep(1)
 			# Look for incoming requests from Arduino using resultQ
 			if (self.sp.inWaiting() != 0):
-				result = self.sp.readline().replace("\n","")
+				result = self.sp.readline()
 				self.resultQ.put(result)
+				time.sleep(1)
 
 				
 

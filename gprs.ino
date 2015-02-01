@@ -34,7 +34,6 @@ void clearBufferArray() {             // function to clear buffer array
   for (int i=0; i<count;i++)
     { buffer[i]=NULL;}                  // clear all index of array with command NULL
 }
-
 void powerUp() {
   pinMode(9, OUTPUT);
   digitalWrite(9, LOW);
