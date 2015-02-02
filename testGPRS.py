@@ -27,16 +27,14 @@ def main():
 				print "Received data from GPRS: " + result
 				time.sleep(0.5)
 
+		input = raw_input
 		task = input("Enter command: ")
-		if task is not '0':
+		if task is None:
 			time.sleep(1)
 		else:
 			taskQ.put(task)
 
 		time.sleep(1)
-
-
-
 
 class SerialProcess(multiprocessing.Process):
  	
@@ -45,7 +43,7 @@ class SerialProcess(multiprocessing.Process):
  		self.taskQ = taskQ
  		self.resultQ = resultQ
  		self.usbPort = '/dev/tty.usbserial-A603QHNB'
- 		self.sp = serial.Serial(self.usbPort, 192000, timeout=0)
+ 		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
  	def close(self):
  		self.sp.close()
@@ -58,7 +56,7 @@ class SerialProcess(multiprocessing.Process):
 
  			if not self.taskQ.empty():
  				task = self.taskQ.get()
- 				self.sp.write(task + b'\r\n')
+ 				self.sp.write(task)
 
  			if self.sp.inWaiting() != 0:
  				result = self.sp.readline()

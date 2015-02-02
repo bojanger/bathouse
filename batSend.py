@@ -38,13 +38,24 @@ class BatSend(multiprocessing.Process):
 
 	# Method for getting an IP address and to initiate TCP communication
 	def tcpGSM(self):
-		self.sp.write(b'AT+CGATT?\r\n')
+
+		self.sp.write(b'AT\r\n')
 		self.timeOut = float(time.strftime("%s", time.localtime()))
 		while timedOut(self.timeOut) is not 1:
 			response = self.sp.readline()
 			if response is not None:
 				print(response)
 				if response is 'OK':
+					break
+
+
+		self.sp.write(b'AT+CGATT?\r\n')
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if response is '+CGATT: 1':
 					break
 
 		self.sp.write(b'AT+CSTT=\"" + APN + "\"\r\n')
