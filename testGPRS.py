@@ -34,8 +34,6 @@ def main():
 		else:
 			taskQ.put(task)
 
-		time.sleep(1)
-
 class SerialProcess(multiprocessing.Process):
  	
  	def __init__(self, taskQ, resultQ):

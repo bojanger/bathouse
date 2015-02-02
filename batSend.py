@@ -25,8 +25,19 @@ class BatSend(multiprocessing.Process):
 		self.usbPort = '/dev/tty.usbserial-A603QHNB'
 		self.sp = serial.Serial(self.usbPort, 19200, timeout=0)
 
+	# Need to expand this method to properly power on the GPRS shield and transmit initial setup commands
 	def powerOn(self):
 		self.sp.write(b'power')
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if 'Call Ready\r\n' is response:
+					finishQ.put(response)
+					break
+		if timedOut(self.timeOut) is 1:
+			return 0
 
 	def close(self):
 		self.sp.close()
@@ -37,75 +48,94 @@ class BatSend(multiprocessing.Process):
 			return 1
 
 	# Method for getting an IP address and to initiate TCP communication
+	#!!!! This method needs to be divided. Setting the APN can only be done once, and AT+CIICR
 	def tcpGSM(self):
 
 		self.sp.write(b'AT\r\n')
 		self.timeOut = float(time.strftime("%s", time.localtime()))
-		while timedOut(self.timeOut) is not 1:
+		while self.timedOut(self.timeOut) is not 1:
 			response = self.sp.readline()
 			if response is not None:
 				print(response)
-				if response is 'OK':
+				if response is 'OK\r\n':
+					finishQ.put(response)
 					break
-
+		if self.timedOut(self.timeOut) is 1:
+			return 0
 
 		self.sp.write(b'AT+CGATT?\r\n')
 		self.timeOut = float(time.strftime("%s", time.localtime()))
-		while timedOut(self.timeOut) is not 1:
+		while self.timedOut(self.timeOut) is not 1:
 			response = self.sp.readline()
 			if response is not None:
 				print(response)
-				if response is '+CGATT: 1':
+				if response is '+CGATT: 1\r\n':
+					finishQ.put(response)
 					break
+		if self.timedOut(self.timeOut) is 1:
+			return 0
 
 		self.sp.write(b'AT+CSTT=\"" + APN + "\"\r\n')
-		time.sleep(1)
-		if self.timedOut() is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while self.timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if response is 'OK\r\n':
+					finishQ.put(response)
+					break
+		if timedOut(self.timeOut) is 1:
 			return 0
 
 		self.sp.write(b'AT+CIICR\r\n')
-		time.sleep(1)
-		if self.timedOut is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while self.timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if response is 'OK\r\n':
+					finishQ.put(response)
+					break
+		if self.timedOut(self.timeOut) is 1:
 			return 0
 
 		self.sp.write(b'AT+CIFSR\r\n')
-		time.sleep(1)
-		if self.timedOut is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while self.timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if '.' in response is True:
+					finishQ.put(response)
+					break
+		if self.timedOut(self.timeOut) is 1:
 			return 0
 
 		self.sp.write(b'AT+CIPSPRT=0\r\n')
-		time.sleep(1)
-		if self.timedOut is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while self.timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if 'OK\r\n' is response:
+					finishQ.put(response)
+					break
+		if self.timedOut(self.timeOut) is 1:
 			return 0
 
 		self.sp.write(b'AT+CIPSTART=\"tcp\",\"" + HOSTSERVER + "\",\"" + HOSTPORT + "\"\r\n')
-		time.sleep(1)
-		if self.timedOut is 0:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
+		self.timeOut = float(time.strftime("%s", time.localtime()))
+		while self.timedOut(self.timeOut) is not 1:
+			response = self.sp.readline()
+			if response is not None:
+				print(response)
+				if 'CONNECT OK\r\n' is response:
+					finishQ.put(response)
+					break
+		if self.timedOut(self.timeOut) is 1:
 			return 0
 
 		self.sp.write(b'AT+CIPSEND\r\n')
-		time.sleep(1)
-		if self.timedOut is not 1:
-			return 0
-		response = self.sp.readline()
-		if response is "ERROR":
-			return 0
-
 		print "Ready to send!"
 
 		return 1
