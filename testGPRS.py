@@ -9,30 +9,31 @@ command line
 import time
 import multiprocessing
 import serial
+import serialServer
 
 def main():
 	taskQ = multiprocessing.Queue()
 	resultQ = multiprocessing.Queue()
-	sp = SerialProcess(taskQ, resultQ)
+	sp = serialServer.SerialProcess(taskQ, resultQ)
 	sp.daemon = True
 	sp.start()
 
 	time.sleep(1)
 
+	input = raw_input
+	task = input("Enter command: ")
+	taskQ.put(task)
+
 	while True:
 
-		if not resultQ.empty():
-			while not resultQ.empty():
-				result = resultQ.get()
-				print "Received data from GPRS: " + result
-				time.sleep(0.5)
-
-		input = raw_input
-		task = input("Enter command: ")
-		if task is None:
-			time.sleep(1)
-		else:
-			taskQ.put(task)
+		if resultQ.empty() is False:
+			result = resultQ.get()
+			print "Received data from GPRS: " + result
+			task = input("Enter command: ")
+			if task is None or task is '':
+				time.sleep(1)
+			else:
+				taskQ.put(task)
 
 class SerialProcess(multiprocessing.Process):
  	

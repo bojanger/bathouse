@@ -27,12 +27,10 @@ class SerialProcess(multiprocessing.Process):
 			if not self.taskQ.empty():
 				task = self.taskQ.get()
 				self.sp.write(task)
-				time.sleep(1)
 			# Look for incoming requests from Arduino using resultQ
-			if (self.sp.inWaiting() != 0):
-				result = self.sp.readline()
+			result = self.sp.readline()
+			if result is not None and result is not '':
 				self.resultQ.put(result)
-				time.sleep(1)
 
 				
 

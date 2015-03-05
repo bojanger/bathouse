@@ -1,0 +1,41 @@
+#########################
+
+AT Command list
+<Command> - <Description>
+	<Related Commands>
+
+#########################
+
+ATE0 - Set local echo to FALSE
+ATE1 - Set local echo to TRUE
+AT+CGATT? - Check status of attached modem. 0 = FALSE || 1 = TRUE
+	AT+CGATT=1
+	AT+CGATT=0
+AT+CFUN=1,1 - Reboot the modem.
+AT+CMEE? - Check status of error message format.
+	AT+CMEE=1 - Use error codes instead of text.
+	AT+CMEE=2 - Use error text instead of codes.
+AT+CCLK? - Check date and time on modem.
+	AT+CCLK="yy/mm/dd, hh:mm:ss" - Set date and clock. Requires 24 hour format.
+AT+CIND? - Check status flags. Output: +CIND: <battery voltage>, <signal strength (0-5)>, <service (0,1)>, <sounder>, <message>, <call>, <roam>, <smsfull>
+AT+CGDCONT? - List all PDP(Packet Data Protocol) Contexts.
+	AT+CGDCONT=<1-9> - Set PDP Context to corresponding number.
+AT+CGACT? - Dispay status of Activated Contexts
+	AT+CGACT=<Context number>,<1,0> - Activate/Deactivate a specified PDP Context.
+AT+CPIN? - Check whether the SIM card is present or locked. Returns READY if SIM card is ready to use.
+AT+CGREG? - Check to see if modem is registered on the home network of the SIM card. Returns '+CGREG: 0,1' if registered. 0,0 = Not registered, 0,2 = Searching, 0,3 = Registration denied, 0,5 Registered, non-home network.
+AT+COPS? - Displays network information from the registered SIM card.
+AT+CSQ - Returns signal quality of the network.
+
+// Sending TCP Communication
+
+AT+CSTT? - Display APN server for TCP communication.
+	AT+CSTT="<APN address>" - Set APN to corresponding input.
+AT+CIICR - Enable GPRS connection.
+AT+CIFSR - Get local IP address
+
+	// IP lease duration is network dependent. May need to renew if necessary. (Needs further research)
+
+AT+CIPSTART="TCP", "<Address of server>", "<Port>" - If command is input correctly, modem will return 'OK'. Must wait for 'CONNECT OK' response before sending data.
+AT+CIPSEND - Following information will be sent via TCP. Must be formatted correctly for receiving server to respond. Ctrl+Z/chr(26) ends the message and sends.
+AT+CIPCLOSE - Closes TCP connection if not terminated from other end.

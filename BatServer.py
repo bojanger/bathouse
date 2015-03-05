@@ -2,7 +2,7 @@
 
 '''
 Server code for the bat house at
-Valencia State College, West Campus
+Valencia State College, Wıest Campus
 Written by Toan Nguyen
 1-22-15
 toannguyen@knights.ucf.edu
@@ -85,7 +85,7 @@ def main():
 		if (int(time.strftime('%M', time.localtime()))%30) is 0:
 			self.taskQ.put("temp")
 			time.sleep(2)
-			2
+			
 			while not resultQ.empty():
 				temp = resultQ.get()
 				self.batQ.put("{\"method\": \"put\",\"resource\": \"/feeds/100441/\",\"params\"" +
