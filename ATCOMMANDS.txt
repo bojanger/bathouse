@@ -32,10 +32,10 @@ AT+CSQ - Returns signal quality of the network.
 AT+CSTT? - Display APN server for TCP communication.
 	AT+CSTT="<APN address>" - Set APN to corresponding input.
 AT+CIICR - Enable GPRS connection.
-AT+CIFSR - Get local IP address
+AT+CIFSR - Get local IP address.
 
 	// IP lease duration is network dependent. May need to renew if necessary. (Needs further research)
 
 AT+CIPSTART="TCP", "<Address of server>", "<Port>" - If command is input correctly, modem will return 'OK'. Must wait for 'CONNECT OK' response before sending data.
-AT+CIPSEND - Following information will be sent via TCP. Must be formatted correctly for receiving server to respond. Ctrl+Z/chr(26) ends the message and sends.
+AT+CIPSEND - Following information will be sent via TCP. Must be formatted correctly for receiving server to respond. Ctrl+Z/chr(26) ends the message and sends. Responses are echoed.
 AT+CIPCLOSE - Closes TCP connection if not terminated from other end.

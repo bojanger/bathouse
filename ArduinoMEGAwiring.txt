@@ -1,0 +1,14 @@
+Pin 20 SDA Clock Module
+Pin 21 SCL Clock Module
+Pin 22 Rear Bottom Infrared Sensor
+Pin 23 Front Bottom Infrared Sensor
+Pin 24 Test LED
+Pin 38 Left PIR Sensor
+Pin 39 Right PIR Sensor
+Pin 52 Back Top Infrared Sensor
+Pin 53 Front Top Infrared Sensor
+Pin A0 Brown - Middle Temperature Sensor
+Pin A1 Red - Instrument Compartment Temperature Sensor
+Pin A2 Purple - Top Temperature Sensor
+Pin A3 Orange - Bottom Temperature Sensor
+ 
